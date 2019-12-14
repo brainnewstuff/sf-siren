@@ -12,8 +12,16 @@
         <SirenText />
       </h2>
     </div>
-    <Timer />
-    <SirenAudio />
+    <Timer
+      v-bind:timezone-offset="-480"
+    >
+      <div slot-scope="{ dateTime }">
+        <div>
+          {{ dateTime }}
+        </div>
+        <SirenAudio />
+      </div>
+    </Timer>
   </div>
 </template>
 
