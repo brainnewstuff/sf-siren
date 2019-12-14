@@ -9,7 +9,9 @@ export default {
     }
   },
   data () {
-    return {}
+    return {
+      dateTime: ''
+    }
   },
   created () {
     this.setDateTime()
@@ -22,7 +24,7 @@ export default {
     setDateTime () {
       const now = new Date()
 
-      this.dateTime = new Date(
+      const dateTime = new Date(
         now.getUTCFullYear(),
         now.getUTCMonth(),
         now.getUTCDate(),
@@ -31,7 +33,8 @@ export default {
         now.getUTCMinutes() - this.timezoneOffset,
         now.getUTCSeconds()
       )
-      // TODO: use emit or a root emit or an event bus here, so all components know what time it is
+
+      this.$set(this, 'dateTime', dateTime)
     },
     stopClock () {
       clearInterval(this.intervalId)
