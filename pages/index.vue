@@ -14,13 +14,17 @@
     </div>
     <Clock
       v-bind:timezone-offset="480"
+      v-bind:interval-time="500"
+      @is-in-time-window="handleTimeWindowChange"
     >
-      <div slot-scope="{ dateTime }">
+      <template v-slot:default="clock">
         <div>
-          {{ dateTime }}
+          <div>
+            {{ clock.dateTime }}
+          </div>
+          <SirenAudio />
         </div>
-        <SirenAudio />
-      </div>
+      </template>
     </Clock>
   </div>
 </template>
@@ -39,6 +43,28 @@ export default {
     SirenAudio,
     SirenText,
     Clock
+  },
+  data () {
+    return {
+      dateTime: {},
+      isInTimeWindow: false
+    }
+  },
+  watch: {
+    clock (val, oldVal) {
+      console.log('shiiiittt', val)
+    }
+  },
+  methods: {
+    handleTimeWindowChange ({ dateTime, isInTimeWindow }) {
+      // only set value if it's changed
+      if (this.isInTimeWindow !== isInTimeWindow) {
+        this.isInTimeWindow = isInTimeWindow
+        this.dateTime = dateTime
+        console.log('this.isInTimeWindow', this.isInTimeWindow)
+        console.log('this.dateTime', this.dateTime)
+      }
+    }
   }
 }
 </script>

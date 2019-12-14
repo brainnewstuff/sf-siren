@@ -1,16 +1,37 @@
 <script>
-const INTERVAL_TIME = 500
-
 export default {
   props: {
     timezoneOffset: {
       default: 0,
       type: Number
+    },
+    intervalTime: {
+      default: 500,
+      type: Number
+    },
+    startTimeWindow: {
+      default: '',
+      type: String
+    },
+    endTimeWindow: {
+      default: '',
+      type: String
     }
   },
   data () {
     return {
-      dateTime: ''
+      dateTime: {},
+      isInTimeWindow: false
+    }
+  },
+  watch: {
+    intervalTime (val, oldVal) {
+      // if the interval changes, clear the
+      // current one and start a new one
+      if (val !== oldVal) {
+        this.stopClock()
+        this.startClock()
+      }
     }
   },
   created () {
@@ -34,20 +55,34 @@ export default {
         now.getUTCSeconds()
       )
 
-      this.$set(this, 'dateTime', dateTime)
+      this.$set(
+        this,
+        'dateTime',
+        dateTime
+      )
     },
     stopClock () {
       clearInterval(this.intervalId)
     },
-    // TODO; this is noon thing is prolly best handled at the page level or in a component that cares more about the siren start/stop times
-    getIsNoon () {
+    // TODO: this is noon thing is prolly best handled at the page level or in a component that cares more about the siren start/stop times
+    // TODO: hrm or maybe just expose a boolean to the outside world... 🤔
+    getIsInTimeWindow () {
+      return false
+    },
+    handleTimeChange () {
+      const isInTimeWindow = this.getIsInTimeWindow()
+      const payload = {
+        dateTime: this.dateTime,
+        isInTimeWindow
+      }
+
+      this.setDateTime()
+      this.$emit('is-in-time-window', payload)
     },
     startClock () {
       // TODO: interval that is smaller when we're super close to noon (within say 10 seconds?) and like half a second otherwise
       // NOTE: this won't work if I move getIsNoon outside...hmmmmmmmmmmmmmmmmmmmmmmm
-      this.intervalId = setInterval(() => {
-        this.setDateTime()
-      }, INTERVAL_TIME)
+      this.intervalId = setInterval(this.handleTimeChange, this.intervalTime)
     }
   },
   render () {
