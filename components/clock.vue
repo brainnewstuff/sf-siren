@@ -1,5 +1,5 @@
 <script>
-const INTERVAL_TIME = 200
+const INTERVAL_TIME = 500
 
 export default {
   props: {
@@ -13,6 +13,10 @@ export default {
   },
   created () {
     this.setDateTime()
+    this.startClock()
+  },
+  beforeDestroy () {
+    this.stopClock()
   },
   methods: {
     setDateTime () {
@@ -24,20 +28,22 @@ export default {
         now.getUTCDate(),
         // TODO: get a daylight savings offset using the same trick I did at sqor
         now.getUTCHours(),
-        now.getUTCMinutes() + this.timezoneOffset,
+        now.getUTCMinutes() - this.timezoneOffset,
         now.getUTCSeconds()
       )
+      // TODO: use emit or a root emit or an event bus here, so all components know what time it is
     },
     stopClock () {
       clearInterval(this.intervalId)
     },
+    // TODO; this is noon thing is prolly best handled at the page level or in a component that cares more about the siren start/stop times
     getIsNoon () {
     },
     startClock () {
       // TODO: interval that is smaller when we're super close to noon (within say 10 seconds?) and like half a second otherwise
+      // NOTE: this won't work if I move getIsNoon outside...hmmmmmmmmmmmmmmmmmmmmmmm
       this.intervalId = setInterval(() => {
-        this.getIsNoon()
-        // maybe re-render?
+        this.setDateTime()
       }, INTERVAL_TIME)
     }
   },

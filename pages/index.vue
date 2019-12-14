@@ -12,8 +12,8 @@
         <SirenText />
       </h2>
     </div>
-    <Timer
-      v-bind:timezone-offset="-480"
+    <Clock
+      v-bind:timezone-offset="480"
     >
       <div slot-scope="{ dateTime }">
         <div>
@@ -21,7 +21,7 @@
         </div>
         <SirenAudio />
       </div>
-    </Timer>
+    </Clock>
   </div>
 </template>
 
@@ -30,7 +30,7 @@ import ApproveAudio from '~/components/approve-audio.vue'
 import Siren from '~/components/siren.vue'
 import SirenAudio from '~/components/siren-audio.vue'
 import SirenText from '~/components/siren-text.vue'
-import Timer from '~/components/timer.vue'
+import Clock from '~/components/clock.vue'
 
 export default {
   components: {
@@ -38,7 +38,7 @@ export default {
     Siren,
     SirenAudio,
     SirenText,
-    Timer
+    Clock
   }
 }
 </script>
