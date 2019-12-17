@@ -111,6 +111,6 @@ export default {
   color: #526488;
   word-spacing: 5px;
   padding-bottom: 15px;
-  word-break: break-all;
+  word-break: break-word;
 }
 </style>
