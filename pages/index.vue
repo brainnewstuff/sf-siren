@@ -9,23 +9,31 @@
         sf-siren
       </h1>
       <h2 class="subtitle">
+        Miss the Tuesday noon siren? Get your fix here!
+      </h2>
+      <!--
+      <h2 class="subtitle">
         <SirenText />
       </h2>
+      -->
     </div>
+    <!--
     <Clock
       v-bind:timezone-offset="480"
       v-bind:interval-time="500"
-      @is-in-time-window="handleTimeWindowChange"
+      @on-clock-time-change="handleClockTimeChange"
     >
       <template v-slot:default="clock">
         <div>
-          <div>
-            {{ clock.dateTime }}
-          </div>
-          <SirenAudio />
+          {{ clock.dateTime }}
         </div>
       </template>
     </Clock>
+    -->
+    <SirenAudio
+      v-bind:should-play-audio="isInTimeWindow"
+      v-bind:time="dateTime"
+    />
   </div>
 </template>
 
@@ -33,36 +41,31 @@
 import ApproveAudio from '~/components/approve-audio.vue'
 import Siren from '~/components/siren.vue'
 import SirenAudio from '~/components/siren-audio.vue'
-import SirenText from '~/components/siren-text.vue'
-import Clock from '~/components/clock.vue'
+// import SirenText from '~/components/siren-text.vue'
+// import Clock from '~/components/clock.vue'
 
 export default {
   components: {
     ApproveAudio,
     Siren,
-    SirenAudio,
-    SirenText,
-    Clock
+    SirenAudio
+    // SirenText
+    // Clock
   },
   data () {
     return {
-      dateTime: {},
-      isInTimeWindow: false
-    }
-  },
-  watch: {
-    clock (val, oldVal) {
-      console.log('shiiiittt', val)
+      dateTime: new Date(),
+      isInTimeWindow: undefined
     }
   },
   methods: {
-    handleTimeWindowChange ({ dateTime, isInTimeWindow }) {
+    handleClockTimeChange ({ dateTime, isInTimeWindow }) {
       // only set value if it's changed
       if (this.isInTimeWindow !== isInTimeWindow) {
         this.isInTimeWindow = isInTimeWindow
         this.dateTime = dateTime
-        console.log('this.isInTimeWindow', this.isInTimeWindow)
-        console.log('this.dateTime', this.dateTime)
+        // console.log('this.isInTimeWindow', this.isInTimeWindow)
+        // console.log('this.dateTime', this.dateTime)
       }
     }
   }

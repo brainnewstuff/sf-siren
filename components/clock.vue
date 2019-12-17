@@ -8,14 +8,6 @@ export default {
     intervalTime: {
       default: 500,
       type: Number
-    },
-    startTimeWindow: {
-      default: '',
-      type: String
-    },
-    endTimeWindow: {
-      default: '',
-      type: String
     }
   },
   data () {
@@ -67,7 +59,13 @@ export default {
     // TODO: this is noon thing is prolly best handled at the page level or in a component that cares more about the siren start/stop times
     // TODO: hrm or maybe just expose a boolean to the outside world... 🤔
     getIsInTimeWindow () {
-      return false
+      const hours = this.dateTime.getHours()
+      const minutes = this.dateTime.getMinutes()
+      const seconds = this.dateTime.getSeconds()
+      // TODO: figure out a way to make this variable using props or by moving logic out of this component
+      const isInTimeWindow = hours === 4 && minutes === 26 && seconds <= 30
+
+      return isInTimeWindow
     },
     handleTimeChange () {
       const isInTimeWindow = this.getIsInTimeWindow()
@@ -77,7 +75,7 @@ export default {
       }
 
       this.setDateTime()
-      this.$emit('is-in-time-window', payload)
+      this.$emit('on-clock-time-change', payload)
     },
     startClock () {
       // TODO: interval that is smaller when we're super close to noon (within say 10 seconds?) and like half a second otherwise
