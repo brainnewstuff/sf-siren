@@ -8,10 +8,6 @@ const routerBase = process.env.DEPLOY_ENV === 'GH_PAGES' ? {
 
 module.exports = {
   ...routerBase,
-  server: {
-    port: 3000,
-    host: 'localhost'
-  },
   mode: 'universal',
   /*
   ** Headers of the page
