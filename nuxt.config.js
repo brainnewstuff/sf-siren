@@ -8,6 +8,10 @@ const routerBase = process.env.DEPLOY_ENV === 'GH_PAGES' ? {
 
 module.exports = {
   ...routerBase,
+  server: {
+    port: 3000,
+    host: 'localhost'
+  },
   mode: 'universal',
   /*
   ** Headers of the page
@@ -49,7 +53,10 @@ module.exports = {
   */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    ['@nuxtjs/google-analytics', {
+      id: 'UA-154723261-1'
+    }]
   ],
   /*
   ** Axios module configuration
