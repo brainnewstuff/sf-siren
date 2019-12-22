@@ -13,6 +13,18 @@
       {{ time }}
     </div>
     -->
+    <button
+      v-if="!isAudioEnabled"
+      v-on:click="initializeAudio"
+    >
+      Initialize Audio
+    </button>
+    <button
+      v-if="isAudioEnabled"
+      v-on:click="playAudio"
+    >
+      Play
+    </button>
   </div>
 </template>
 
@@ -30,18 +42,51 @@ export default {
   },
   data () {
     return {
-      context: {}
+      context: {},
+      isAudioEnabled: false
     }
   },
-  mounted () {
-    // do this in a browser only lifecycle method
-    const AudioContext = window.AudioContext || window.webkitAudioContext
-    const context = new AudioContext()
+  beforeMount () {
+    // TODO: see if we need more than just webkit handling here
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    // const gainNode = audioContext.createGain()
 
-    this.context = context
+    this.audioContext = audioContext
+  },
+  mounted () {
   },
   methods: {
-    doThing () {
+    initializeAudio () {
+      console.log('ohhai a click?', this.audioContext)
+      this.loadAudio()
+    },
+    loadAudio () {
+      const request = new XMLHttpRequest()
+      const audioPath = 'tuesday-noon-siren.mp3'
+
+      request.open('GET', audioPath, true)
+      request.responseType = 'arraybuffer'
+      request.onload = () => {
+        const { response } = request
+        this.audioContext.decodeAudioData(
+          response,
+          (buffer) => {
+            this.decodeSuccess(buffer, audioPath)
+          },
+          this.decodeError
+        )
+      }
+      request.send()
+    },
+    decodeSuccess () {
+      console.log('ohhai a success?')
+      this.isAudioEnabled = true
+    },
+    decodeError () {
+      console.log('oh nutz an error?')
+    },
+    playAudio () {
+      console.log('ohhai play audio')
     }
   }
 }
