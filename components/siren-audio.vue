@@ -14,11 +14,10 @@
     </div>
     -->
     <button
-      :disabled="!isAudioLoaded"
       v-if="!isAudioEnabled"
-      v-on:click="enableAudio"
+      v-on:click="setAudioContext"
     >
-      Enable Auto Audio (lulz)
+      Load Audio
     </button>
     <button
       v-if="isAudioEnabled"
@@ -51,21 +50,19 @@ export default {
       volume: 6
     }
   },
-  beforeMount () {
-    // TODO: see if we need more than just webkit handling here
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)()
-    const gainNode = audioContext.createGain()
-
-    this.audioContext = audioContext
-    this.gainNode = gainNode
-  },
   mounted () {
-    this.getAudio()
+    // this.getAudio()
   },
   methods: {
-    initializeAudio () {
-      console.log('ohhai a click?', this.audioContext)
+    setAudioContext () {
+      // TODO: see if we need more than just webkit handling here
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+      const gainNode = audioContext.createGain()
+
+      this.audioContext = audioContext
+      this.gainNode = gainNode
       this.getAudio()
+      this.enableAudio()
     },
     getAudio () {
       const request = new XMLHttpRequest()
@@ -88,6 +85,7 @@ export default {
     decodeSuccess (buffer, audioPath) {
       console.log('ohhai a success?')
       this.audioBuffer = buffer
+      this.loadAudioBuffer()
       this.isAudioLoaded = true
     },
     decodeError () {
@@ -96,7 +94,8 @@ export default {
     loadAudioBuffer () {
       const source = this.audioContext.createBufferSource()
       source.buffer = this.audioBuffer
-      source.connect(this.audioContext)
+
+      source.connect(this.audioContext.destination)
       source.connect(this.gainNode)
       this.gainNode.connect(this.audioContext.destination)
       this.setVolume(this.volume)
@@ -112,6 +111,7 @@ export default {
     playAudio () {
       // this.audioSource.start()
       console.log('ohhai play audio', this.audioSource)
+      this.audioSource.start()
     }
   }
 }
