@@ -14,10 +14,11 @@
     </div>
     -->
     <button
+      :disabled="!isAudioLoaded"
       v-if="!isAudioEnabled"
-      v-on:click="initializeAudio"
+      v-on:click="enableAudio"
     >
-      Initialize Audio
+      Enable Auto Audio (lulz)
     </button>
     <button
       v-if="isAudioEnabled"
@@ -42,25 +43,31 @@ export default {
   },
   data () {
     return {
-      context: {},
-      isAudioEnabled: false
+      audioBuffer: {},
+      audioSource: {},
+      audioContext: {},
+      isAudioEnabled: false,
+      isAudioLoaded: false,
+      volume: 6
     }
   },
   beforeMount () {
     // TODO: see if we need more than just webkit handling here
     const audioContext = new (window.AudioContext || window.webkitAudioContext)()
-    // const gainNode = audioContext.createGain()
+    const gainNode = audioContext.createGain()
 
     this.audioContext = audioContext
+    this.gainNode = gainNode
   },
   mounted () {
+    this.getAudio()
   },
   methods: {
     initializeAudio () {
       console.log('ohhai a click?', this.audioContext)
-      this.loadAudio()
+      this.getAudio()
     },
-    loadAudio () {
+    getAudio () {
       const request = new XMLHttpRequest()
       const audioPath = 'tuesday-noon-siren.mp3'
 
@@ -78,15 +85,33 @@ export default {
       }
       request.send()
     },
-    decodeSuccess () {
+    decodeSuccess (buffer, audioPath) {
       console.log('ohhai a success?')
-      this.isAudioEnabled = true
+      this.audioBuffer = buffer
+      this.isAudioLoaded = true
     },
     decodeError () {
       console.log('oh nutz an error?')
     },
+    loadAudioBuffer () {
+      const source = this.audioContext.createBufferSource()
+      source.buffer = this.audioBuffer
+      source.connect(this.audioContext)
+      source.connect(this.gainNode)
+      this.gainNode.connect(this.audioContext.destination)
+      this.setVolume(this.volume)
+      this.audioSource = source
+    },
+    setVolume (volume) {
+      this.gainNode.gain.value = volume
+    },
+    enableAudio () {
+      console.log('ohhai enable an audio?')
+      this.isAudioEnabled = true
+    },
     playAudio () {
-      console.log('ohhai play audio')
+      // this.audioSource.start()
+      console.log('ohhai play audio', this.audioSource)
     }
   }
 }
