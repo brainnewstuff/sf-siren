@@ -20,6 +20,7 @@
       Load Audio
     </button>
     <button
+      :disabled="!isAudioLoaded"
       v-if="isAudioEnabled"
       v-on:click="playAudio"
     >
@@ -49,9 +50,6 @@ export default {
       isAudioLoaded: false,
       volume: 6
     }
-  },
-  mounted () {
-    // this.getAudio()
   },
   methods: {
     setAudioContext () {
