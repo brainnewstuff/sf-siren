@@ -17,7 +17,6 @@
       </h2>
       -->
     </div>
-    <!--
     <Clock
       v-bind:timezone-offset="480"
       v-bind:interval-time="500"
@@ -29,7 +28,6 @@
         </div>
       </template>
     </Clock>
-    -->
     <SirenAudio
       v-bind:should-play-audio="isInTimeWindow"
       v-bind:time="dateTime"
@@ -42,15 +40,15 @@ import ApproveAudio from '~/components/approve-audio.vue'
 import Siren from '~/components/siren.vue'
 import SirenAudio from '~/components/siren-audio.vue'
 // import SirenText from '~/components/siren-text.vue'
-// import Clock from '~/components/clock.vue'
+import Clock from '~/components/clock.vue'
 
 export default {
   components: {
     ApproveAudio,
     Siren,
-    SirenAudio
+    SirenAudio,
     // SirenText
-    // Clock
+    Clock
   },
   data () {
     return {

@@ -7,12 +7,10 @@
       <source src="tuesday-noon-siren.mp3" type="audio/mpeg">
       Your browser does not support the audio element.
     </audio>
-    <!--
     <div>
       {{ shouldPlayAudio }}
       {{ time }}
     </div>
-    -->
     <button
       v-if="!isAudioEnabled"
       v-on:click="setAudioContext"
@@ -51,6 +49,14 @@ export default {
       volume: 6
     }
   },
+  watch: {
+    shouldPlayAudio (oldVal, newVal) {
+      console.log('ohha a change?', newVal)
+      if (oldVal === false && newVal === true) {
+        this.playAudio()
+      }
+    }
+  },
   methods: {
     setAudioContext () {
       // TODO: see if we need more than just webkit handling here
@@ -60,7 +66,7 @@ export default {
       this.audioContext = audioContext
       this.gainNode = gainNode
       this.getAudio()
-      this.enableAudio()
+      this.isAudioEnabled = true
     },
     getAudio () {
       const request = new XMLHttpRequest()
@@ -88,6 +94,7 @@ export default {
     },
     decodeError () {
       console.log('oh nutz an error?')
+      this.isAudioEnabled = false
     },
     loadAudioBuffer () {
       const source = this.audioContext.createBufferSource()
@@ -101,10 +108,6 @@ export default {
     },
     setVolume (volume) {
       this.gainNode.gain.value = volume
-    },
-    enableAudio () {
-      console.log('ohhai enable an audio?')
-      this.isAudioEnabled = true
     },
     playAudio () {
       // this.audioSource.start()

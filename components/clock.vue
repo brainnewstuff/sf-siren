@@ -37,15 +37,16 @@ export default {
     setDateTime () {
       const now = new Date()
 
-      const dateTime = new Date(
+      let dateTime = new Date(
         now.getUTCFullYear(),
         now.getUTCMonth(),
         now.getUTCDate(),
-        // TODO: get a daylight savings offset using the same trick I did at sqor
         now.getUTCHours(),
         now.getUTCMinutes() - this.timezoneOffset,
         now.getUTCSeconds()
       )
+
+      dateTime = this.handleDST(dateTime)
 
       this.$set(
         this,
@@ -63,7 +64,8 @@ export default {
       const minutes = this.dateTime.getMinutes()
       const seconds = this.dateTime.getSeconds()
       // TODO: figure out a way to make this variable using props or by moving logic out of this component
-      const isInTimeWindow = hours === 4 && minutes === 26 && seconds <= 30
+      // TODO: also make sure we only do this on a tuesday
+      const isInTimeWindow = hours === 13 && minutes === 19 && seconds <= 30
 
       return isInTimeWindow
     },
@@ -81,6 +83,35 @@ export default {
       // TODO: interval that is smaller when we're super close to noon (within say 10 seconds?) and like half a second otherwise
       // NOTE: this won't work if I move getIsNoon outside...hmmmmmmmmmmmmmmmmmmmmmmm
       this.intervalId = setInterval(this.handleTimeChange, this.intervalTime)
+    },
+    // handle daylight savings time
+    // lovingly lifted from http://javascript.about.com/library/bldst.htm
+    stdTimezoneOffset (dateTime) {
+      const jan = new Date(dateTime.getFullYear(), 0, 1)
+      const jul = new Date(dateTime.getFullYear(), 6, 1)
+
+      return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset())
+    },
+    dst (dateTime) {
+      return dateTime.getTimezoneOffset() < this.stdTimezoneOffset(dateTime)
+    },
+    addHours (dateTime, hours) {
+      dateTime.setTime(dateTime.getTime() + (hours * 60 * 60 * 1000))
+      return dateTime
+    },
+    subtractHours (dateTime, hours) {
+      dateTime.setTime(dateTime.getTime() - (hours * 60 * 60 * 1000))
+      return dateTime
+    },
+    handleDST (dateTime) {
+      // convert timezone offset to hours, and subtract those hours from date instantiated from an ISO timestamp
+      dateTime = this.subtractHours(dateTime, dateTime.getTimezoneOffset() / 60)
+      // if we detect that it is not daylight savings, add an hour to the time
+      if (!this.dst(dateTime)) {
+        dateTime = this.addHours(dateTime, 1)
+      }
+
+      return dateTime
     }
   },
   render () {
