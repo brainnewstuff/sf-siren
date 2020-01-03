@@ -51,7 +51,6 @@ export default {
   },
   watch: {
     shouldPlayAudio (oldVal, newVal) {
-      console.log('ohha a change?', newVal)
       if (oldVal === false && newVal === true) {
         this.playAudio()
       }
@@ -87,13 +86,11 @@ export default {
       request.send()
     },
     decodeSuccess (buffer, audioPath) {
-      console.log('ohhai a success?')
       this.audioBuffer = buffer
       this.loadAudioBuffer()
       this.isAudioLoaded = true
     },
     decodeError () {
-      console.log('oh nutz an error?')
       this.isAudioEnabled = false
     },
     loadAudioBuffer () {
@@ -111,7 +108,6 @@ export default {
     },
     playAudio () {
       // this.audioSource.start()
-      console.log('ohhai play audio', this.audioSource)
       this.audioSource.start()
     }
   }

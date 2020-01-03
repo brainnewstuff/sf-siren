@@ -18,7 +18,7 @@
       -->
     </div>
     <Clock
-      v-bind:timezone-offset="480"
+      v-bind:timezone="America/Tijuana"
       v-bind:interval-time="500"
       @on-clock-time-change="handleClockTimeChange"
     >
